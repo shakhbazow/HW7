@@ -1,6 +1,6 @@
 /******************************************************************
  *
- *   YOUR NAME / SECTION NUMBER
+ *   Emil Shahbazov / 272-01
  *
  *   This java file contains the problem solutions for the methods selectionSort,
  *   mergeSortDivisibleByKFirst, asteroidsDestroyed, and numRescueCanoes methods.
@@ -23,7 +23,7 @@ public class ProblemSolutions {
      * sort is performed.
      *
      * @param values        - int[] array to be sorted.
-     * @param ascending     - if true,method performs an ascending sort, else descending.
+     * @param //ascending     - if true,method performs an ascending sort, else descending.
      *                        There are two method signatures allowing this parameter
      *                        to not be passed and defaulting to 'true (or ascending sort).
      */
@@ -38,6 +38,24 @@ public class ProblemSolutions {
 
         for (int i = 0; i < n - 1; i++) {
 
+            int selectedIndex = i;
+
+            for (int j = i + 1; j < n; j++) {
+                if (ascending) {
+                    if (values[j] < values[selectedIndex]) {
+                        selectedIndex = j;
+                    }
+                } else {
+                    if (values[j] > values[selectedIndex]) {
+                        selectedIndex = j;
+                    }
+                }
+            }
+
+            // swap
+            int temp = values[selectedIndex];
+            values[selectedIndex] = values[i];
+            values[i] = temp;
             // YOU CODE GOES HERE -- COMPLETE THE INNER LOOP OF THIS
             // "SELECTION SORT" ALGORITHM.
             // DO NOT FORGET TO ADD YOUR NAME / SECTION ABOVE
@@ -102,8 +120,54 @@ public class ProblemSolutions {
         // TO CODE WITH A SPACE COMPLEXITY OF O(N LOG N), WHICH IS FINE FOR PURPOSES
         // OF THIS PROGRAMMING EXERCISES.
 
-        return;
 
+
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
+
+        // create temp arrays
+        int[] LeftArray = new int[n1];
+        int[] RightArray = new int[n2];
+
+        // copy data to temp arrays
+        for (int i = 0; i < n1; ++i)
+            LeftArray[i] = arr[left + i];
+        for (int j = 0; j < n2; ++j)
+            RightArray[j] = arr[mid + 1 + j];
+
+        int i = 0, j = 0, idx = left;
+
+        while (i < n1 && j < n2) {
+            boolean leftDivisible = LeftArray[i] % k == 0;
+            boolean rightDivisible = RightArray[j] % k == 0;
+
+            if (leftDivisible && rightDivisible) {
+                // both divisible by k, preserve original order
+                arr[idx++] = LeftArray[i++];
+            } else if (leftDivisible) {
+                // left is divisible, right is not
+                arr[idx++] = LeftArray[i++];
+            } else if (rightDivisible) {
+                // right is divisible, left is not
+                arr[idx++] = RightArray[j++];
+            } else {
+                // both not divisible, sort in ascending order
+                if (LeftArray[i] <= RightArray[j]) {
+                    arr[idx++] = LeftArray[i++];
+                } else {
+                    arr[idx++] = RightArray[j++];
+                }
+            }
+        }
+
+        // Copy any remaining elements
+        while (i < n1) {
+            arr[idx++] = LeftArray[i++];
+        }
+
+        while (j < n2) {
+            arr[idx++] = RightArray[j++];
+        }
     }
 
 
@@ -154,9 +218,22 @@ public class ProblemSolutions {
 
     public static boolean asteroidsDestroyed(int mass, int[] asteroids) {
 
+        Arrays.sort(asteroids);
+
+        long currentMass = mass; // use long to prevent integer overflow
+
+        for (int asteroid : asteroids) {
+            if (currentMass >= asteroid) {
+                currentMass += asteroid;
+            } else {
+                return false;
+            }
+        }
+
+        return true;
         // YOUR CODE GOES HERE, CONSIDER USING ARRAYS.SORT()
 
-        return false;
+
 
     }
 
@@ -193,8 +270,24 @@ public class ProblemSolutions {
     public static int numRescueSleds(int[] people, int limit) {
 
         // YOUR CODE GOES HERE, CONSIDER USING ARRAYS.SORT
+        Arrays.sort(people);
 
-        return -1;
+        int left = 0;
+        int right = people.length - 1;
+        int sleds = 0;
+
+        while (left <= right) {
+            if (people[left] + people[right] <= limit) {
+                left++;
+                right--;
+            } else {
+                right--;
+            }
+            sleds++;
+        }
+
+        return sleds;
+
 
     }
 
